@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="stylesheet" href="CSS/style.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="JS/angular/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.2.13/ng-file-upload.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/jszip.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/alasql/0.4.9/alasql.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.4/xlsx.core.min.js"></script>
+    <script type="text/javascript" src="JS/script.js"></script>
+</head>
+<body ng-app="MyApp" ng-controller="MyController" dir="rtl">
+
+    <label class="btn btn-primary">
+        <i class="fa fa-image"></i> טעינת קובץ<input style="display: none;" type="file" ngf-select="SelectFile($file)" />
+    </label>
+    
+    <div ng-if="excelRows.length">
+        <label class="btn btn-primary my-green-btn">
+            <i class="fa fa-image"></i> הורדת קובץ התוצאות<button ng-click="createNewFile()" style="display: none;"></button>
+        </label>
+        <h1>מטריצת בלבול</h1>
+        <table class="styled-table" id="tblCustomers" cellpadding="0" cellspacing="0" ng-show="IsVisible">
+            ac
+            <tr>
+                <td></td>
+                <td>ידני</td>
+                <td>מכונה</td>
+                <td>רמת דיוק</td>
+            </tr>
+            <tr>
+                <td>תקינים</td>
+                <td>{{goodData.length}}</td>
+                <td>{{normal}}</td>
+                <td>{{goodData.length/(goodData.length + normal)}}</td>
+            </tr>
+            <tr>
+                <td>רקובים</td>
+                <td>{{badData.length}}</td>
+                <td>{{rotten}}</td>
+                <td>{{badData.length/(badData.length + rotten)}}</td>
+            </tr>
+        </table>
+        <h2>רמת דיוק עפ"י סוג ההפניה</h2>
+        <table class="styled-table" id="tblCustomers" cellpadding="0" cellspacing="0" ng-show="IsVisible">
+            <tr>
+                <td></td>
+                <td>ידני</td>
+                <td>מכונה</td>
+                <td>רמת דיוק</td>
+            </tr>
+            <tr>
+                <td>תקין פנימי</td>
+                <td>{{goodDataInRefernce}}</td>
+                <td>{{normalInRefernce}}</td>
+                <td>{{goodDataInRefernce/(goodDataInRefernce + normalInRefernce)}}</td>
+            </tr>
+            <tr>
+                <td>תקין חיצוני</td>
+                <td>{{goodDataOutRefernce}}</td>
+                <td>{{normalOutRefernce}}</td>
+                <td>{{goodDataOutRefernce/(goodDataOutRefernce + normalOutRefernce)}}</td>
+            </tr>
+            <tr>
+                <td>רקוב פנימי</td>
+                <td>{{badDataInRefernce}}</td>
+                <td>{{rottenInRefernce}}</td>
+                <td>{{badDataInRefernce/(badDataInRefernce + rottenInRefernce)}}</td>
+            </tr>
+            <tr>
+                <td>רקוב חיצוני</td>
+                <td>{{badDataOutRefernce}}</td>
+                <td>{{rottenOutRefernce}}</td>
+                <td>{{badDataOutRefernce/(badDataOutRefernce + rottenOutRefernce)}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!--<h1 ng-if="allData.length > 0">נתונים {{allData.length}}</h1>
+    <table class="styled-table" id="tblCustomers" cellpadding="0" cellspacing="0" ng-show="IsVisible">
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Is Title Relevant</td>
+                <td>is Ref QK</td>
+                <td>is Same Law Ref</td>
+                <td>is Title Ref Relevant</td>
+                <td>name</td>
+                <td>paragraph</td>
+                <td>ref</td>
+                <td>techID</td>
+                <td>title</td>
+                <td>type</td>
+            </tr>
+        </thead>
+        <tbody ng-repeat="m in allData | limitTo:4000">
+            <tr>
+                <td>{{m.ID}}</td>
+                <td>{{m.IsTitleRelevant}}</td>
+                <td>{{m.isRefQK}}</td>
+                <td>{{m.isSameLawRef}}</td>
+                <td>{{m.isTitleRefRelevant}}</td>
+                <td>{{m.name}}</td>
+                <td>{{m.paragraph}}</td>
+                <td>{{m.ref}}</td>
+                <td>{{m.techID}}</td>
+                <td>{{m.title}}</td>
+                <td>{{m.type}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h1 ng-if="goodData.length > 0">נתונים טובים{{goodData.length}}</h1>
+    <table class="styled-table" id="tblCustomers" cellpadding="0" cellspacing="0" ng-show="IsVisible">
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Is Title Relevant</td>
+                <td>is Ref QK</td>
+                <td>is Same Law Ref</td>
+                <td>is Title Ref Relevant</td>
+                <td>name</td>
+                <td>paragraph</td>
+                <td>ref</td>
+                <td>techID</td>
+                <td>title</td>
+                <td>type</td>
+            </tr>
+        </thead>
+        <tbody ng-repeat="m in goodData">
+            <tr>
+                <td>{{m.ID}}</td>
+                <td>{{m.IsTitleRelevant}}</td>
+                <td>{{m.isRefQK}}</td>
+                <td>{{m.isSameLawRef}}</td>
+                <td>{{m.isTitleRefRelevant}}</td>
+                <td>{{m.name}}</td>
+                <td>{{m.paragraph}}</td>
+                <td>{{m.ref}}</td>
+                <td>{{m.techID}}</td>
+                <td>{{m.title}}</td>
+                <td>{{m.type}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h1 ng-if="badData.length > 0">רקובים {{badData.length}}</h1>
+    <table class="styled-table" id="tblCustomers" cellpadding="0" cellspacing="0" ng-show="IsVisible">
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Is Title Relevant</td>
+                <td>is Ref QK</td>
+                <td>is Same Law Ref</td>
+                <td>is Title Ref Relevant</td>
+                <td>name</td>
+                <td>paragraph</td>
+                <td>ref</td>
+                <td>techID</td>
+                <td>title</td>
+                <td>type</td>
+            </tr>
+        </thead>
+        <tbody ng-repeat="m in badData">
+            |limitTo:4
+            <tr>
+                <td>{{m.ID}}</td>
+                <td>{{m.IsTitleRelevant}}</td>
+                <td>{{m.isRefQK}}</td>
+                <td>{{m.isSameLawRef}}</td>
+                <td>{{m.isTitleRefRelevant}}</td>
+                <td>{{m.name}}</td>
+                <td>{{m.paragraph}}</td>
+                <td>{{m.ref}}</td>
+                <td>{{m.techID}}</td>
+                <td>{{m.title}}</td>
+                <td>{{m.type}}</td>
+            </tr>
+        </tbody>
+    </table>-->
+
+</body>
+</html>
